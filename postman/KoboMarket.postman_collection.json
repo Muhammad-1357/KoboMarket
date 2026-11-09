@@ -1,0 +1,306 @@
+{
+  "info": {
+    "_postman_id": "b16a89b9-68f5-4db4-bf6e-7e348e3b2bb5",
+    "name": "KoboMarket API",
+    "description": "Development collection for the KoboMarket API. Set baseUrl and token variables. All money amounts are integer kobo. A local mock provider is used for funding and payouts.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:3000/api/v1" },
+    { "key": "token", "value": "" },
+    { "key": "email", "value": "buyer1@kobomarket.local" },
+    { "key": "password", "value": "" },
+    { "key": "verificationToken", "value": "" },
+    { "key": "resetToken", "value": "" },
+    { "key": "refreshToken", "value": "" },
+    { "key": "idempotencyKey", "value": "demo-checkout-001" },
+    { "key": "amountKobo", "value": "500000" },
+    { "key": "fundingReference", "value": "" },
+    { "key": "webhookSignature", "value": "" },
+    { "key": "productId", "value": "" },
+    { "key": "productSlug", "value": "seed-product-1" },
+    { "key": "cartItemId", "value": "" },
+    { "key": "orderId", "value": "" },
+    { "key": "subOrderId", "value": "" },
+    { "key": "disputeId", "value": "" },
+    { "key": "notificationId", "value": "" },
+    { "key": "vendorId", "value": "" },
+    { "key": "userId", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\"email\":\"{{email}}\",\"password\":\"{{password}}\"}", "options": { "raw": { "language": "json" } } },
+            "url": "{{baseUrl}}/auth/register",
+            "auth": { "type": "noauth" }
+          }
+        },
+        {
+          "name": "Verify email",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\"token\":\"{{verificationToken}}\"}", "options": { "raw": { "language": "json" } } },
+            "url": "{{baseUrl}}/auth/verify-email",
+            "auth": { "type": "noauth" }
+          }
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\"email\":\"{{email}}\",\"password\":\"{{password}}\"}", "options": { "raw": { "language": "json" } } },
+            "url": "{{baseUrl}}/auth/login",
+            "auth": { "type": "noauth" }
+          }
+        },
+        {
+          "name": "Refresh token",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\"token\":\"{{refreshToken}}\"}", "options": { "raw": { "language": "json" } } },
+            "url": "{{baseUrl}}/auth/refresh",
+            "auth": { "type": "noauth" }
+          }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\"refreshToken\":\"{{refreshToken}}\"}", "options": { "raw": { "language": "json" } } },
+            "url": "{{baseUrl}}/auth/logout"
+          }
+        },
+        {
+          "name": "Forgot password",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\"email\":\"{{email}}\"}", "options": { "raw": { "language": "json" } } },
+            "url": "{{baseUrl}}/auth/forgot-password",
+            "auth": { "type": "noauth" }
+          }
+        },
+        {
+          "name": "Reset password",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\"token\":\"{{resetToken}}\",\"password\":\"{{password}}\"}", "options": { "raw": { "language": "json" } } },
+            "url": "{{baseUrl}}/auth/reset-password",
+            "auth": { "type": "noauth" }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Users, vendors, and products",
+      "item": [
+        { "name": "Get my profile", "request": { "method": "GET", "url": "{{baseUrl}}/users/me" } },
+        {
+          "name": "Apply as vendor",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\"storeName\":\"Demo Store\",\"description\":\"A development store for KoboMarket\",\"bankDetails\":{\"bankCode\":\"001\",\"accountNumber\":\"1234567890\",\"accountName\":\"Demo Vendor\"}}", "options": { "raw": { "language": "json" } } },
+            "url": "{{baseUrl}}/vendors/apply"
+          }
+        },
+        { "name": "Get public vendor", "request": { "method": "GET", "url": "{{baseUrl}}/vendors/{{vendorId}}" } },
+        { "name": "List/search products", "request": { "method": "GET", "url": "{{baseUrl}}/products?sort=newest&limit=20" } },
+        { "name": "Get product by slug", "request": { "method": "GET", "url": "{{baseUrl}}/products/{{productSlug}}" } },
+        {
+          "name": "Create product",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\"name\":\"Demo Product\",\"slug\":\"demo-product\",\"description\":\"Development product\",\"priceKobo\":25000,\"category\":\"Home\",\"images\":[],\"stock\":5,\"variants\":[],\"tags\":[\"demo\"]}", "options": { "raw": { "language": "json" } } },
+            "url": "{{baseUrl}}/products"
+          }
+        },
+        {
+          "name": "Update product",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\"priceKobo\":27000}", "options": { "raw": { "language": "json" } } },
+            "url": "{{baseUrl}}/products/{{productId}}"
+          }
+        },
+        { "name": "Soft-delete product", "request": { "method": "DELETE", "url": "{{baseUrl}}/products/{{productId}}" } },
+        {
+          "name": "Review product",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\"rating\":5,\"comment\":\"Good product\"}", "options": { "raw": { "language": "json" } } },
+            "url": "{{baseUrl}}/products/{{productId}}/reviews"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Cart, wallet, and orders",
+      "item": [
+        { "name": "Get cart", "request": { "method": "GET", "url": "{{baseUrl}}/cart" } },
+        {
+          "name": "Add cart item",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\"productId\":\"{{productId}}\",\"quantity\":1}", "options": { "raw": { "language": "json" } } },
+            "url": "{{baseUrl}}/cart/items"
+          }
+        },
+        {
+          "name": "Update cart item",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\"quantity\":2}", "options": { "raw": { "language": "json" } } },
+            "url": "{{baseUrl}}/cart/items/{{cartItemId}}"
+          }
+        },
+        { "name": "Remove cart item", "request": { "method": "DELETE", "url": "{{baseUrl}}/cart/items/{{cartItemId}}" } },
+        { "name": "Get wallet", "request": { "method": "GET", "url": "{{baseUrl}}/wallet" } },
+        { "name": "List wallet transactions", "request": { "method": "GET", "url": "{{baseUrl}}/wallet/transactions?limit=25" } },
+        {
+          "name": "Initialize wallet funding",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Idempotency-Key", "value": "{{idempotencyKey}}-funding" }
+            ],
+            "body": { "mode": "raw", "raw": "{\"amountKobo\":{{amountKobo}}}", "options": { "raw": { "language": "json" } } },
+            "url": "{{baseUrl}}/wallet/fund"
+          }
+        },
+        {
+          "name": "Send signed mock funding webhook",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "x-paystack-signature", "value": "{{webhookSignature}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{\"event\":\"charge.success\",\"data\":{\"reference\":\"{{fundingReference}}\",\"amountKobo\":{{amountKobo}}}}", "options": { "raw": { "language": "json" } } },
+            "url": "{{baseUrl}}/webhooks/paystack",
+            "auth": { "type": "noauth" }
+          }
+        },
+        {
+          "name": "Initialize checkout",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Idempotency-Key", "value": "{{idempotencyKey}}" }],
+            "url": "{{baseUrl}}/orders/checkout"
+          }
+        },
+        { "name": "List my orders", "request": { "method": "GET", "url": "{{baseUrl}}/orders" } },
+        { "name": "Get order", "request": { "method": "GET", "url": "{{baseUrl}}/orders/{{orderId}}" } },
+        { "name": "Cancel order", "request": { "method": "POST", "url": "{{baseUrl}}/orders/{{orderId}}/cancel" } },
+        { "name": "Ship sub-order", "request": { "method": "PATCH", "url": "{{baseUrl}}/sub-orders/{{subOrderId}}/ship" } },
+        { "name": "Confirm delivery", "request": { "method": "PATCH", "url": "{{baseUrl}}/sub-orders/{{subOrderId}}/confirm" } }
+      ]
+    },
+    {
+      "name": "Disputes and payouts",
+      "item": [
+        {
+          "name": "Open dispute",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\"reason\":\"The item did not arrive\",\"evidence\":[]}", "options": { "raw": { "language": "json" } } },
+            "url": "{{baseUrl}}/sub-orders/{{subOrderId}}/disputes"
+          }
+        },
+        { "name": "List disputes (admin)", "request": { "method": "GET", "url": "{{baseUrl}}/disputes" } },
+        {
+          "name": "Resolve dispute (admin)",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\"resolution\":\"reject\",\"note\":\"Reviewed evidence\"}", "options": { "raw": { "language": "json" } } },
+            "url": "{{baseUrl}}/disputes/{{disputeId}}/resolve"
+          }
+        },
+        {
+          "name": "Request payout",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Idempotency-Key", "value": "{{idempotencyKey}}-payout" }
+            ],
+            "body": { "mode": "raw", "raw": "{\"amountKobo\":100000}", "options": { "raw": { "language": "json" } } },
+            "url": "{{baseUrl}}/payouts"
+          }
+        },
+        { "name": "List payouts", "request": { "method": "GET", "url": "{{baseUrl}}/payouts" } }
+      ]
+    },
+    {
+      "name": "Notifications and admin",
+      "item": [
+        { "name": "List notifications", "request": { "method": "GET", "url": "{{baseUrl}}/notifications?limit=20" } },
+        { "name": "Unread notification count", "request": { "method": "GET", "url": "{{baseUrl}}/notifications/unread-count" } },
+        { "name": "Mark notification read", "request": { "method": "PATCH", "url": "{{baseUrl}}/notifications/{{notificationId}}/read" } },
+        { "name": "Mark all notifications read", "request": { "method": "PATCH", "url": "{{baseUrl}}/notifications/read-all" } },
+        { "name": "Search users (admin)", "request": { "method": "GET", "url": "{{baseUrl}}/admin/users?limit=50" } },
+        {
+          "name": "Freeze/unfreeze user (admin)",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\"frozen\":true}", "options": { "raw": { "language": "json" } } },
+            "url": "{{baseUrl}}/admin/users/{{userId}}/freeze"
+          }
+        },
+        {
+          "name": "Approve/reject vendor (admin)",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\"approved\":true}", "options": { "raw": { "language": "json" } } },
+            "url": "{{baseUrl}}/admin/vendors/{{vendorId}}/approve"
+          }
+        },
+        { "name": "View wallet ledger (admin)", "request": { "method": "GET", "url": "{{baseUrl}}/admin/wallets/{{userId}}/ledger?limit=50" } },
+        {
+          "name": "Set commission (admin)",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\"commissionBps\":500}", "options": { "raw": { "language": "json" } } },
+            "url": "{{baseUrl}}/admin/settings/commission"
+          }
+        },
+        { "name": "Revenue report (admin)", "request": { "method": "GET", "url": "{{baseUrl}}/admin/reports/revenue?from=2026-01-01&to=2026-01-31" } },
+        { "name": "Top vendors report (admin)", "request": { "method": "GET", "url": "{{baseUrl}}/admin/reports/top-vendors" } },
+        { "name": "Escrow report (admin)", "request": { "method": "GET", "url": "{{baseUrl}}/admin/reports/escrow" } },
+        { "name": "Reconciliation report (admin)", "request": { "method": "GET", "url": "{{baseUrl}}/admin/reports/reconciliation" } }
+      ]
+    }
+  ]
+}

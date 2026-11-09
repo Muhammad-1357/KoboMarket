@@ -1,0 +1,23 @@
+services:
+  mongo-test:
+    image: mongo:7
+    ports:
+      - "27018:27017"
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+  postgres-test:
+    image: postgres:16
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_DB: kobomarket_test
+      POSTGRES_USER: kobomarket
+      POSTGRES_PASSWORD: kobomarket
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U kobomarket -d kobomarket_test"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
